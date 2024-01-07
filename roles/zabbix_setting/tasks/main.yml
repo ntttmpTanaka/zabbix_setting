@@ -3,3 +3,28 @@
     state: present                                
     host_groups: "{{ target_groups }}"
 
+- name: Import Zabbix templates from JSON
+  # set task level variables as we change ansible_connection plugin here
+  community.zabbix.zabbix_template:
+    template_json: "{{ lookup('file', 'template.json') }}"
+    state: present
+
+- name: Create a new host or rewrite an existing host's info
+# Set task level following variables for Zabbix Server host in task
+  community.zabbix.zabbix_host:
+    host_name: ExampleHost
+    visible_name: ExampleName
+    description: My ExampleHost Description
+    host_groups:
+      - test group1
+    link_templates:
+      - testtest
+    status: enabled
+    state: present
+    interfaces:
+      - type: 1
+        main: 1
+        useip: 1
+        ip: 192.168.11.11
+        dns: ""
+        port: "10050"
