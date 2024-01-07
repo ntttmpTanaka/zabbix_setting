@@ -20,26 +20,18 @@
                     }
                 ],
                 "items": [
-                    {
-                        "uuid": "df561a0cece94760a78704edf7da7326",
-                        "name": "Linux: Host name of Zabbix agent running",
-                        "key": "agent.hostname",
-                        "delay": "1h",
-                        "history": "7d",
-                        "trends": "0",
-                        "value_type": "CHAR",
-                        "preprocessing": [
+		    {
+                        "uuid": "49d5b82ce05446439dda6a1319b9f357",
+                        "name": "ping",
+                        "type": "SIMPLE",
+                        "key": "icmpping",
+                        "delay": "3s",
+                        "triggers": [
                             {
-                                "type": "DISCARD_UNCHANGED_HEARTBEAT",
-                                "parameters": [
-                                    "1d"
-                                ]
-                            }
-                        ],
-                        "tags": [
-                            {
-                                "tag": "component",
-                                "value": "system"
+                                "uuid": "c57b2a8f635b41439a0fa3669a803a75",
+                                "expression": "last(/testtest/icmpping,#1)=0",
+                                "name": "pingcheck",
+                                "priority": "HIGH"
                             }
                         ]
                     }
