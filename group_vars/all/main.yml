@@ -1,0 +1,12 @@
+---
+ansible_port: 22
+ansible_user: Admin
+ansible_httpapi_pass: zabbix
+ansible_network_os: community.zabbix.zabbix
+ansible_connection: httpapi
+ansible_httpapi_port: 80
+http_login_user: Admin
+http_login_password: zabbix
+target_groups:
+  - "test group1"
+  - "test group2"
