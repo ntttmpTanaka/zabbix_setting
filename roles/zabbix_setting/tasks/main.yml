@@ -28,3 +28,16 @@
         ip: 192.168.11.11
         dns: ""
         port: "10050"
+
+- name: "Create an email mediatype with SMTP authentication"
+  # set task level variables as we change ansible_connection plugin here
+  community.zabbix.zabbix_mediatype:
+    name: "Ops email"
+    type: "email"
+    smtp_server: "example.com"
+    smtp_server_port: 2000
+    smtp_email: "ops@example.com"
+    smtp_authentication: true
+    username: "smtp_user"
+    password: "smtp_pass"
+
