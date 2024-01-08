@@ -1,24 +1,23 @@
-- name: add_hostgroup
-  community.zabbix.zabbix_group:                                
-    state: present                                
-    host_groups: "{{ target_groups }}"
-
-- name: Import Zabbix templates from JSON
+- name: Import templates from JSON
   # set task level variables as we change ansible_connection plugin here
   community.zabbix.zabbix_template:
     template_json: "{{ lookup('file', 'template.json') }}"
     state: present
 
+- name: add_hostgroup
+  community.zabbix.zabbix_group:
+    state: present
+    host_groups: "testgrp"
+
 - name: Create a new host or rewrite an existing host's info
-# Set task level following variables for Zabbix Server host in task
   community.zabbix.zabbix_host:
     host_name: ExampleHost
     visible_name: ExampleName
     description: My ExampleHost Description
     host_groups:
-      - test group1
+      - "testgrp"
     link_templates:
-      - testtest
+      - "testtest"
     status: enabled
     state: present
     interfaces:
@@ -30,14 +29,63 @@
         port: "10050"
 
 - name: "Create an email mediatype with SMTP authentication"
-  # set task level variables as we change ansible_connection plugin here
   community.zabbix.zabbix_mediatype:
     name: "Ops email"
     type: "email"
-    smtp_server: "example.com"
-    smtp_server_port: 2000
-    smtp_email: "ops@example.com"
+    smtp_server: "xxxxxxxxxxxxxxxxx"
+    smtp_server_port: xxx
+    smtp_email: "xxxxxxxxxxxxxxxxxxxxxxxx"
     smtp_authentication: true
-    username: "smtp_user"
-    password: "smtp_pass"
+    smtp_security: STARTTLS
+    username: "xxxxxxxxxxxxxxxxxxxxxxxxx"
+    password: "xxxxxxxxxxxxx"
+
+- name: create a new zabbix user.
+  community.zabbix.zabbix_user:
+    username: Admin2
+    name: Zabbix2
+    role_name: "Super admin role"
+    surname: Administrator2
+    usrgrps:
+      - Zabbix administrators
+    passwd: zabbixzabbix
+    lang: default
+    theme: default
+    autologin: "1"
+    autologout: "0"
+    refresh: "30s"
+    rows_per_page: "200"
+    user_medias:
+      - mediatype: Ops email
+        sendto:
+          - xxxxxxxxxxxxxxxxxxxxxx
+        period: 1-7,00:00-24:00
+        severity:
+          not_classified: no
+          information: yes
+          warning: yes
+          average: yes
+          high: yes
+          disaster: yes
+        active: yes
+    state: present
+
+- name: Deploy trigger action
+  community.zabbix.zabbix_action:
+    name: "Send alerts to Admin"
+    event_source: "trigger"
+    state: present
+    status: enabled
+    esc_period: 60
+    conditions:
+      - type: "trigger_severity"
+        operator: "equals"
+        value: "high"
+    operations:
+      - type: send_message
+        subject: "Something bad is happening"
+        op_message: "Come on, guys do something"
+        media_type: "Ops email"
+        send_to_users:
+          - "Admin2"
 
